@@ -25,7 +25,7 @@ export default function BreakTables() {
   };
   const currentDate = new Date().toLocaleDateString();
   return (
-    <div> 
+    <div className="w-max"> 
       <div className="mb-4">
       <div className="text-lg font-bold mb-2">Data: {currentDate}</div>
         
@@ -63,7 +63,7 @@ export default function BreakTables() {
         <tbody>
           {tableData.map((row, index) => (
             <tr key={index}>
-              <td className="text-center p-2 w-48 border border-gray-300 ">{row.name}</td>
+              <td className="text-center p-2 border border-gray-300 ">{row.name}</td>
               <td className="text-center p-2 border border-gray-300">{row.clock}</td>
             </tr>
           ))}
