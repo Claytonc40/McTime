@@ -6,7 +6,6 @@ const nextConfig = {
   ...withPWA({
     pwa: {
       dest: "public",
-      swSrc: "public/sw.js", // Caminho para o Service Worker personalizado
     },
   }),
 };
