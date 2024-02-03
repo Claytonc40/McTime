@@ -9,9 +9,10 @@ const green = "#4aec8c";
 const red = "#f54e4e";
 
 export default function Time() {
-  const initialTime = 65 * 60; // Alterado para 5 segundos para teste
+  const initialTime = 65 * 60;
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
+  const [startTime, setStartTime] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
@@ -22,8 +23,7 @@ export default function Time() {
           const newSeconds = prevSeconds - 1;
 
           if (newSeconds === 0) {
-            
-            
+            // Ação quando o tempo chegar a zero
           }
 
           return newSeconds;
@@ -35,17 +35,20 @@ export default function Time() {
 
     return () => {
       clearInterval(interval);
-    
     };
   }, [isPaused]);
 
   const togglePause = () => {
+    if (isPaused) {
+      setStartTime(new Date().toLocaleTimeString()); // Armazenar a hora de início quando o relógio é iniciado
+    }
     setIsPaused(!isPaused);
   };
 
   const resetTimer = () => {
     setSeconds(initialTime);
     setIsPaused(true);
+    setStartTime(null); // Resetar a hora de início ao pressionar o botão de reset
   };
 
   const formatTime = (timeInSeconds: number) => {
@@ -55,7 +58,7 @@ export default function Time() {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center  text-center">
       <div className="mr-4">
         <CircularProgressbar
           className="w-10 h-14"
@@ -76,7 +79,11 @@ export default function Time() {
           <PauseButton onClick={togglePause} className="mr-2" />
         )}
         <ResetButton onClick={resetTimer} />
+       
       </div>
+      {startTime && (
+          <div className="m-4 text-sm text-gray-500">{startTime}</div>
+        )}
     </div>
   );
 }
