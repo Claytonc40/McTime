@@ -12,18 +12,17 @@ export default function Time() {
   const initialTime = 65 * 60; // Alterado para 5 segundos para teste
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
-  const [audio] = useState(new Audio("/songs/despertado.mp3")); // Caminho relativo à pasta public
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
 
     if (!isPaused) {
       interval = setInterval(() => {
-        setSeconds((prevSeconds) => {
+        setSeconds((prevSeconds: number) => {
           const newSeconds = prevSeconds - 1;
 
           if (newSeconds === 0) {
-            audio.play();
+            
             
           }
 
@@ -36,11 +35,9 @@ export default function Time() {
 
     return () => {
       clearInterval(interval);
-      // Parar o som ao desmontar o componente
-      audio.pause();
-      audio.currentTime = 0;
+    
     };
-  }, [isPaused, audio]);
+  }, [isPaused]);
 
   const togglePause = () => {
     setIsPaused(!isPaused);
@@ -49,9 +46,6 @@ export default function Time() {
   const resetTimer = () => {
     setSeconds(initialTime);
     setIsPaused(true);
-    // Parar o som ao pressionar o botão de reset
-    audio.pause();
-    audio.currentTime = 0;
   };
 
   const formatTime = (timeInSeconds: number) => {
