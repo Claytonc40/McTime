@@ -13,6 +13,7 @@ export default function Time() {
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
   const [startTime, setStartTime] = useState<string | null>(null);
+  const [zero, setZero] = useState(false);
 
   useEffect(() => {
     let interval: string | number | NodeJS.Timeout | undefined;
@@ -23,9 +24,9 @@ export default function Time() {
           const newSeconds = prevSeconds - 1;
 
           if (newSeconds === 0) {
-            // Ação quando o tempo chegar a zero
+            setIsPaused(true);
+            setZero(true);
           }
-
           return newSeconds;
         });
       }, 1000);
@@ -54,7 +55,10 @@ export default function Time() {
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   return (
@@ -73,17 +77,18 @@ export default function Time() {
         />
       </div>
       <div>
-        {isPaused ? (
-          <PlayButton onClick={togglePause} className="mr-2" />
-        ) : (
-          <PauseButton onClick={togglePause} className="mr-2" />
-        )}
-        <ResetButton onClick={resetTimer} />
-       
-      </div>
-      {startTime && (
+        {zero ? (
           <div className="m-4 text-sm text-gray-500">{startTime}</div>
+        ) : (
+          <div>
+            {isPaused ? (
+              <PlayButton onClick={togglePause} className="mr-2" />
+            ) : (
+              <div className="m-4 text-sm text-gray-500">{startTime}</div>
+            )}
+          </div>
         )}
+      </div>
     </div>
   );
 }
