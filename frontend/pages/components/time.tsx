@@ -16,7 +16,7 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`
+          `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`
         );
         const data = await response.json();
 
@@ -51,7 +51,7 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
           // Atualizar dados no banco de dados a cada segundo
           const timestamp = Date.now();
           fetch(
-            `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+            `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
             {
               method: "PUT",
               headers: {
@@ -84,7 +84,7 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
 
     // Atualizar dados no banco de dados ao pausar ou retomar o cronômetro
     fetch(
-      `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+      `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
       {
         method: "PUT",
         headers: {
@@ -105,7 +105,7 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
 
     // Limpar dados no banco de dados ao redefinir o cronômetro
     fetch(
-      `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+      `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
       {
         method: "PUT",
         headers: {

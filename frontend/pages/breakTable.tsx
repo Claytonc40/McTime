@@ -27,7 +27,7 @@ export default function BreakTables() {
     }
 
     try {
-      const response = await fetch("https://apitime.editecsistema.com.br/api/cronometros", {
+      const response = await fetch("https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export default function BreakTables() {
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
-        const response = await fetch("https://apitime.editecsistema.com.br/api/cronometros");
+        const response = await fetch("https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros");
         const cronometros = await response.json();
 
         const cronometrosData = cronometros.map(
