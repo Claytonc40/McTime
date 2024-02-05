@@ -32,7 +32,7 @@ export default function BreakTables() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nome: newClockName, tempo: 10 * 60 }),
+        body: JSON.stringify({ nome: newClockName, tempo: 65 * 60 }),
       });
 
       const novoCronometro = await response.json();
@@ -86,17 +86,19 @@ export default function BreakTables() {
             nome: any;
             _id: React.Key | null | undefined;
             tempo: number;
-            initialStartTime: string; // Adicione este campo
+            startTime: string;
+            initialStartTime: string;
           }) => ({
             name: cronometro.nome,
             clock: (
               <Time
                 key={cronometro._id}
                 initialTime={cronometro.tempo}
-                cronometroId={undefined}
+                cronometroId={cronometro._id}
               />
             ),
             initialStartTime: new Date(cronometro.initialStartTime),
+            cronometroId: cronometro._id,
           })
         );
 
