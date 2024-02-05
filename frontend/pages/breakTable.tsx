@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Time from "./components/time";
+import { Link } from "react-router-dom";
 
 interface Cronometro {
   _id: React.Key | null | undefined;
@@ -27,13 +28,16 @@ export default function BreakTables() {
     }
 
     try {
-      const response = await fetch("https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nome: newClockName, tempo: 65 * 60 }),
-      });
+      const response = await fetch(
+        "https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ nome: newClockName, tempo: 65 * 60 }),
+        }
+      );
 
       const novoCronometro = await response.json();
 
@@ -78,7 +82,9 @@ export default function BreakTables() {
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
-        const response = await fetch("https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros");
+        const response = await fetch(
+          "https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros"
+        );
         const cronometros = await response.json();
 
         const cronometrosData = cronometros.map(
@@ -140,6 +146,9 @@ export default function BreakTables() {
             />
           </svg>
         </button>
+        <Link to="/lojas">
+          <button>Ir para Página de Lojas</button>
+        </Link>
       </div>
       <table className="w-full border border-gray-300">
         <thead>
