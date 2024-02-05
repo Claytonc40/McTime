@@ -7,7 +7,7 @@ export default function PlayButton(props: any) {
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-10 h-10 bg-transparent text-white"
+        className="w-10 h-10 bg-transparent text-white "
       >
         <path
           strokeLinecap="round"
