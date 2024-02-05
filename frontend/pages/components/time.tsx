@@ -2,122 +2,54 @@ import React, { useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import PlayButton from "./playButton";
+import PauseButton from "./pauseButton";
+import ResetButton from "./resetButton";
 
-interface TimeProps {
-  cronometroId: React.Key | null | undefined;
-  initialTime: number;
-}
+const green = "#4aec8c";
+const red = "#f54e4e";
 
-const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
+export default function Time() {
+  const initialTime = 65 * 60;
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
+  const [startTime, setStartTime] = useState<string | null>(null);
+  const [zero, setZero] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`
-        );
-        const data = await response.json();
-
-        if (data) {
-          const elapsedTime = Math.floor(
-            (Date.now() - new Date(data.startTime).getTime()) / 1000
-          );
-          const remainingSeconds = Math.max(initialTime - elapsedTime, 0);
-          setSeconds(remainingSeconds);
-          setIsPaused(data.isPaused);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados do cronômetro:", error);
-      }
-    };
-
-    fetchData();
-  }, [cronometroId, initialTime]);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | undefined;
+    let interval: string | number | NodeJS.Timeout | undefined;
 
     if (!isPaused) {
-      intervalId = setInterval(async () => {
-        setSeconds((prevSeconds) => {
-          if (prevSeconds === 0) {
-            clearInterval(intervalId);
+      interval = setInterval(() => {
+        setSeconds((prevSeconds: number) => {
+          const newSeconds = prevSeconds - 1;
+
+          if (newSeconds === 0) {
             setIsPaused(true);
-            // Lógica a ser executada quando o tempo atingir zero.
+            setZero(true);
           }
-
-          // Atualizar dados no banco de dados a cada segundo
-          const timestamp = Date.now();
-          fetch(
-            `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                seconds: prevSeconds,
-                startTime: new Date(timestamp).toISOString(),
-                isPaused: false, // Alterado para false quando o cronômetro está em execução
-              }),
-            }
-          );
-
-          return prevSeconds > 0 ? prevSeconds - 1 : 0;
+          return newSeconds;
         });
       }, 1000);
-    } else if (intervalId) {
-      clearInterval(intervalId);
+    } else {
+      clearInterval(interval);
     }
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
+      clearInterval(interval);
     };
-  }, [isPaused, cronometroId]);
+  }, [isPaused]);
 
   const togglePause = () => {
+    if (isPaused) {
+      setStartTime(new Date().toLocaleTimeString()); // Armazenar a hora de início quando o relógio é iniciado
+    }
     setIsPaused(!isPaused);
-
-    // Atualizar dados no banco de dados ao pausar ou retomar o cronômetro
-    fetch(
-      `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          seconds,
-          startTime: new Date().toISOString(),
-          isPaused: !isPaused,
-        }),
-      }
-    );
   };
 
   const resetTimer = () => {
     setSeconds(initialTime);
     setIsPaused(true);
-
-    // Limpar dados no banco de dados ao redefinir o cronômetro
-    fetch(
-      `https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/cronometros/${cronometroId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          seconds: initialTime,
-          startTime: new Date().toISOString(),
-          isPaused: true,
-        }),
-      }
-    );
+    setStartTime(null); // Resetar a hora de início ao pressionar o botão de reset
   };
 
   const formatTime = (timeInSeconds: number) => {
@@ -133,30 +65,30 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
     <div className="flex items-center  text-center">
       <div className="mr-4">
         <CircularProgressbar
-          className="w-10 h-20"
+          className="w-10 h-14"
           value={(initialTime - seconds) * (100 / initialTime)}
           text={formatTime(seconds)}
           styles={buildStyles({
             strokeLinecap: "butt",
             textColor: "#fff",
-            pathColor: isPaused ? "#f54e4e" : "#4aec8c",
+            pathColor: isPaused ? red : green,
             trailColor: "rgba(255,255,255,.2)",
           })}
         />
       </div>
       <div>
-        {isPaused ? (
-          <PlayButton onClick={togglePause} className="mr-2 hover:opacity-20" />
+        {zero ? (
+          <div className="m-4 text-sm text-gray-500">{startTime}</div>
         ) : (
-          <PlayButton
-            onClick={togglePause}
-            className="mr-2 opacity-50 cursor-not-allowed"
-            disabled
-          />
+          <div>
+            {isPaused ? (
+              <PlayButton onClick={togglePause} className="mr-2" />
+            ) : (
+              <div className="m-4 text-sm text-gray-500">{startTime}</div>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
-};
-
-export default Time;
+}
