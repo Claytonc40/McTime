@@ -12,12 +12,11 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/cronometros/${cronometroId}`
+          `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`
         );
         const data = await response.json();
 
@@ -51,17 +50,20 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
 
           // Atualizar dados no banco de dados a cada segundo
           const timestamp = Date.now();
-          fetch(`http://localhost:3001/api/cronometros/${cronometroId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              seconds: prevSeconds,
-              startTime: new Date(timestamp).toISOString(),
-              isPaused: false, // Alterado para false quando o cronômetro está em execução
-            }),
-          });
+          fetch(
+            `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                seconds: prevSeconds,
+                startTime: new Date(timestamp).toISOString(),
+                isPaused: false, // Alterado para false quando o cronômetro está em execução
+              }),
+            }
+          );
 
           return prevSeconds > 0 ? prevSeconds - 1 : 0;
         });
@@ -81,17 +83,20 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
     setIsPaused(!isPaused);
 
     // Atualizar dados no banco de dados ao pausar ou retomar o cronômetro
-    fetch(`http://localhost:3001/api/cronometros/${cronometroId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        seconds,
-        startTime: new Date().toISOString(),
-        isPaused: !isPaused,
-      }),
-    });
+    fetch(
+      `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          seconds,
+          startTime: new Date().toISOString(),
+          isPaused: !isPaused,
+        }),
+      }
+    );
   };
 
   const resetTimer = () => {
@@ -99,17 +104,20 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
     setIsPaused(true);
 
     // Limpar dados no banco de dados ao redefinir o cronômetro
-    fetch(`http://localhost:3001/api/cronometros/${cronometroId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        seconds: initialTime,
-        startTime: new Date().toISOString(),
-        isPaused: true,
-      }),
-    });
+    fetch(
+      `https://apitime.editecsistema.com.br/api/cronometros/${cronometroId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          seconds: initialTime,
+          startTime: new Date().toISOString(),
+          isPaused: true,
+        }),
+      }
+    );
   };
 
   const formatTime = (timeInSeconds: number) => {
