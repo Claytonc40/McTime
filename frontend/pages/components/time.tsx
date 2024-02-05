@@ -11,7 +11,7 @@ interface TimeProps {
 const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
   const [seconds, setSeconds] = useState(initialTime);
   const [isPaused, setIsPaused] = useState(true);
-  const [zero, setZero] = useState(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +46,6 @@ const Time: React.FC<TimeProps> = ({ cronometroId, initialTime }) => {
           if (prevSeconds === 0) {
             clearInterval(intervalId);
             setIsPaused(true);
-            setZero(true);
             // Lógica a ser executada quando o tempo atingir zero.
           }
 

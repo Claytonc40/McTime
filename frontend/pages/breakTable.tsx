@@ -86,18 +86,17 @@ export default function BreakTables() {
             nome: any;
             _id: React.Key | null | undefined;
             tempo: number;
-            startTime: string;
+            initialStartTime: string; // Adicione este campo
           }) => ({
             name: cronometro.nome,
             clock: (
               <Time
                 key={cronometro._id}
                 initialTime={cronometro.tempo}
-                cronometroId={cronometro._id}
+                cronometroId={undefined}
               />
             ),
-            initialStartTime: new Date(cronometro.startTime),
-            cronometroId: cronometro._id,
+            initialStartTime: new Date(cronometro.initialStartTime),
           })
         );
 
@@ -159,7 +158,7 @@ export default function BreakTables() {
                 {row.clock}
               </td>
               <td className="text-center border border-gray-300 p-2">
-                {row.initialStartTime.toLocaleTimeString([], {
+                {row.initialStartTime?.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
