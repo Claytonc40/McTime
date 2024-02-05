@@ -32,7 +32,7 @@ export default function BreakTables() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nome: newClockName, tempo: 20 }),
+        body: JSON.stringify({ nome: newClockName, tempo: 10 * 60 }),
       });
 
       const novoCronometro = await response.json();
