@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import Time from "./components/time";
-import { Link } from "react-router-dom";
+import Link from "next/link";
+import Lojas from "./lojas";
 
 interface Cronometro {
   _id: React.Key | null | undefined;
   nome: string;
   tempo: number;
   pausado: boolean;
+  loja: string;
 }
 // Importações e outras partes do código...
 
 interface TableRow {
+  lojaId: ReactNode;
   name: string;
   clock: JSX.Element;
   initialStartTime: Date;
@@ -20,6 +23,7 @@ interface TableRow {
 export default function BreakTables() {
   const [tableData, setTableData] = useState<TableRow[]>([]);
   const [newClockName, setNewClockName] = useState<string>("");
+  const [selectedLoja, setSelectedLoja] = useState<string | null>(null); // Adicione o estado para armazenar a loja selecionada
 
   const handleAddRow = async () => {
     if (!newClockName) {
@@ -35,7 +39,11 @@ export default function BreakTables() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ nome: newClockName, tempo: 65 * 60 }),
+          body: JSON.stringify({
+            nome: newClockName,
+            loja: selectedLoja,
+            tempo: 65 * 60,
+          }),
         }
       );
 
@@ -54,6 +62,7 @@ export default function BreakTables() {
           ),
           initialStartTime: new Date(novoCronometro.startTime),
           cronometroId: novoCronometro._id,
+          lojaId: novoCronometro.loja,
         },
       ]);
 
@@ -89,6 +98,7 @@ export default function BreakTables() {
 
         const cronometrosData = cronometros.map(
           (cronometro: {
+            loja: any;
             nome: any;
             _id: React.Key | null | undefined;
             tempo: number;
@@ -105,6 +115,7 @@ export default function BreakTables() {
             ),
             initialStartTime: new Date(cronometro.initialStartTime),
             cronometroId: cronometro._id,
+            lojaId: cronometro.loja,
           })
         );
 
@@ -120,6 +131,7 @@ export default function BreakTables() {
   return (
     <div className="w-max">
       <div className="mb-4">
+        <Lojas setSelectedLoja={setSelectedLoja} />
         <input
           className="text-black p-2"
           type="text"
@@ -146,13 +158,14 @@ export default function BreakTables() {
             />
           </svg>
         </button>
-        <Link to="/lojas">
-          <button>Ir para Página de Lojas</button>
-        </Link>
+        <button>
+          <Link href="/lojas">Ir para Lojas</Link>
+        </button>
       </div>
       <table className="w-full border border-gray-300">
         <thead>
           <tr>
+            <th className="p-2">Loja</th> {/* Adicione a coluna de Loja */}
             <th className="p-2 border border-gray-300">Nome</th>
             <th className="p-3 border border-gray-300">Relógio</th>
             <th className="p-3 border border-gray-300">Hora Inical</th>
@@ -162,6 +175,8 @@ export default function BreakTables() {
         <tbody>
           {tableData.map((row, index) => (
             <tr key={index}>
+              <td className="text-center p-2">{row.lojaId}</td>{" "}
+              {/* Adicione a célula de Loja */}
               <td className="text-center border border-gray-300 p-2">
                 {row.name}
               </td>
@@ -174,7 +189,6 @@ export default function BreakTables() {
                   minute: "2-digit",
                 })}
               </td>
-
               <td className="text-center border border-gray-300 p-2">
                 <button onClick={() => handleDeleteRow(row.cronometroId)}>
                   <svg

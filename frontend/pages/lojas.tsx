@@ -1,99 +1,54 @@
-// Lojas.tsx
+// components/Lojas.tsx
 
 import React, { useState, useEffect } from "react";
+
+interface LojasProps {
+  setSelectedLoja: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
 interface Loja {
   _id: string;
   nome: string;
 }
 
-const Lojas: React.FC = () => {
+const Lojas: React.FC<LojasProps> = ({ setSelectedLoja }) => {
   const [lojas, setLojas] = useState<Loja[]>([]);
-  const [newLojaName, setNewLojaName] = useState("");
-
-  const fetchLojas = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/api/lojas");
-      const data = await response.json();
-      setLojas(data);
-    } catch (error) {
-      console.error("Erro ao buscar lojas:", error);
-    }
-  };
-
-  const handleAddLoja = async () => {
-    if (!newLojaName) {
-      alert("Por favor, forneça um nome para a loja.");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:3001/api/lojas", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nome: newLojaName }),
-      });
-
-      const novaLoja = await response.json();
-
-      setLojas((prevLojas) => [...prevLojas, novaLoja]);
-      setNewLojaName("");
-    } catch (error) {
-      console.error("Erro ao adicionar loja:", error);
-    }
-  };
-
-  const handleDeleteLoja = async (id: string) => {
-    try {
-      await fetch(`http://localhost:3001/api/lojas/${id}`, {
-        method: "DELETE",
-      });
-
-      setLojas((prevLojas) => prevLojas.filter((loja) => loja._id !== id));
-    } catch (error) {
-      console.error("Erro ao excluir loja:", error);
-    }
-  };
 
   useEffect(() => {
+    const fetchLojas = async () => {
+      try {
+        const response = await fetch("https://projetomcd-api-mc-time.zrpb1z.easypanel.host/api/lojas");
+        
+        if (!response.ok) {
+          console.error("Erro ao buscar lojas. Resposta não OK.");
+          return;
+        }
+
+        const lojasData = await response.json();
+        
+        if (!Array.isArray(lojasData)) {
+          console.error("Erro ao buscar lojas. A resposta não é um array.");
+          return;
+        }
+
+        setLojas(lojasData);
+      } catch (error) {
+        console.error("Erro ao buscar lojas:", error);
+      }
+    };
+
     fetchLojas();
   }, []);
 
   return (
-    <div>
-      <div className="mb-4">
-        <input
-          className="text-black p-2"
-          type="text"
-          placeholder="Nome da Loja"
-          value={newLojaName}
-          onChange={(e) => setNewLojaName(e.target.value)}
-        />
-        <button className="bg-transparent p-5 align-middle" onClick={handleAddLoja}>
-          Adicionar Loja
-        </button>
-      </div>
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th className="p-2">Nome</th>
-            <th className="p-2">Ação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {lojas.map((loja) => (
-            <tr key={loja._id}>
-              <td className="text-center p-2">{loja.nome}</td>
-              <td className="text-center p-2">
-                <button onClick={() => handleDeleteLoja(loja._id)}>Excluir</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <select onChange={(e) => setSelectedLoja(e.target.value)}>
+      <option value="">Selecione uma loja</option>
+      {lojas.map((loja) => (
+        <option key={loja._id} value={loja._id}>
+          {loja.nome}
+        </option>
+      ))}
+    </select>
   );
 };
 
